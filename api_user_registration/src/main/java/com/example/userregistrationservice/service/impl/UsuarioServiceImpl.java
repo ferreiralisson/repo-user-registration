@@ -1,12 +1,16 @@
 package com.example.userregistrationservice.service.impl;
 
+import com.example.userregistrationservice.dto.EnderecoReponse;
 import com.example.userregistrationservice.dto.UsuarioRequest;
+import com.example.userregistrationservice.dto.UsuarioResponse;
 import com.example.userregistrationservice.model.Usuario;
 import com.example.userregistrationservice.repository.EnderecoRepository;
 import com.example.userregistrationservice.repository.UsuarioRepository;
 import com.example.userregistrationservice.service.EnderecoService;
 import com.example.userregistrationservice.service.UsuarioService;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class UsuarioServiceImpl implements UsuarioService {
@@ -30,6 +34,25 @@ public class UsuarioServiceImpl implements UsuarioService {
 
         var usuarioSalvo = this.repository.save(usuario);
         salvarEndereco(usuarioRequest, usuarioSalvo);
+    }
+
+    @Override
+    public List<UsuarioResponse> puxarTodosUsuariosComEnderecos() {
+        List<Usuario> usuarios = this.repository.getAllWithEnderecos();
+        return usuarios.stream()
+                .map(u ->
+                        new UsuarioResponse(u.getNome(), u.getEmail(),
+                        u.getEndereco()
+                                .stream()
+                                .map(e -> new EnderecoReponse(e.getId(),
+                                        e.getCep(),
+                                        e.getLogradouro(),
+                                        e.getLocalidade(),
+                                        e.getUf(),
+                                        e.getEstado())
+                                ).toList()
+                        )
+                ).toList();
     }
 
     private void salvarEndereco(UsuarioRequest usuarioRequest, Usuario usuarioSalvo) {
