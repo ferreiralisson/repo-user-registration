@@ -7,5 +7,6 @@ import java.util.List;
 
 public interface UsuarioService {
     void salvarUsuario(UsuarioRequest usuarioRequest);
-    List<UsuarioResponse> puxarTodosUsuariosComEnderecos();
+
+    List<UsuarioResponse> listarUsuarios();
 }

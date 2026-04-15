@@ -43,14 +43,8 @@ public class UsuarioController {
     }
 
     @GetMapping
-    @Operation(summary = "Puxar todos os usuarios", description = "Puxa todos os usuarios do e endereços por usuario no banco")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Ok",
-                    content = @Content(mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
-    })
-    public ResponseEntity<List<UsuarioResponse>> findAll() {
-        logger.info("Puxando usuarios do banco");
-        return ResponseEntity.status(HttpStatus.OK).body(this.usuarioService.puxarTodosUsuariosComEnderecos());
+    @Operation(summary = "Listar usuários", description = "Retorna todos os usuários cadastrados com seus endereços")
+    public ResponseEntity<List<UsuarioResponse>> listarUsuarios() {
+        return ResponseEntity.ok(usuarioService.listarUsuarios());
     }
 }

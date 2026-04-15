@@ -2,9 +2,6 @@ package com.example.userregistrationservice.model;
 
 import jakarta.persistence.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity
 public class Usuario {
 
@@ -13,8 +10,6 @@ public class Usuario {
     private Long id;
     private String nome;
     private String email;
-    @OneToMany(mappedBy = "usuario", fetch = FetchType.EAGER,cascade = CascadeType.DETACH)
-    private List<Endereco> endereco = new ArrayList<>();
 
     public Usuario() {
     }
@@ -33,7 +28,6 @@ public class Usuario {
         private Long id;
         private String nome;
         private String email;
-        private List<Endereco> endereco;
 
         public UsuarioBuilder id(Long id) {
             this.id = id;
@@ -47,10 +41,6 @@ public class Usuario {
 
         public UsuarioBuilder email(String email) {
             this.email = email;
-            return this;
-        }
-        public UsuarioBuilder endereco(List<Endereco> endereco) {
-            this.endereco = endereco;
             return this;
         }
 
@@ -81,13 +71,5 @@ public class Usuario {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public List<Endereco> getEndereco() {
-        return endereco;
-    }
-
-    public void setEndereco(List<Endereco> endereco) {
-        this.endereco = endereco;
     }
 }
