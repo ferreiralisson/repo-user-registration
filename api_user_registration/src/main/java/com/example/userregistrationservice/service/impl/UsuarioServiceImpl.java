@@ -56,6 +56,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     private EnderecoResponse mapEnderecoToResponse(Endereco endereco) {
         return new EnderecoResponse(
+                endereco.getId(),
                 endereco.getCep(),
                 endereco.getLogradouro(),
                 endereco.getLocalidade(),
