@@ -18,6 +18,8 @@ export class UsuarioFormComponent implements OnInit {
   carregando = false;
   usuarios: Usuario[] = [];
   usuarioParaExcluir: Usuario | null = null;
+  modoEdicao = false;
+  idUsuarioEmEdicao: number | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -51,10 +53,17 @@ export class UsuarioFormComponent implements OnInit {
       return;
     }
 
-    this.carregando = true;
-    this.mensagemSucesso = '';
-    this.mensagemErro = '';
+    this.limparMensagens();
 
+    if (this.modoEdicao && this.idUsuarioEmEdicao !== null) {
+      this.atualizarUsuario();
+    } else {
+      this.criarUsuario();
+    }
+  }
+
+  private criarUsuario(): void {
+    this.carregando = true;
     const usuario: Usuario = this.form.value;
 
     this.usuarioService.cadastrar(usuario).subscribe({
@@ -71,6 +80,49 @@ export class UsuarioFormComponent implements OnInit {
     });
   }
 
+  private atualizarUsuario(): void {
+    if (this.idUsuarioEmEdicao === null) {
+      return;
+    }
+
+    this.carregando = true;
+    const usuario: Usuario = this.form.value;
+
+    this.usuarioService.atualizarUsuario(this.idUsuarioEmEdicao, usuario).subscribe({
+      next: () => {
+        this.mensagemSucesso = 'Usuário atualizado com sucesso!';
+        this.form.reset();
+        this.modoEdicao = false;
+        this.idUsuarioEmEdicao = null;
+        this.carregarUsuarios();
+        this.carregando = false;
+      },
+      error: (err) => {
+        this.mensagemErro = err.error?.message || 'Erro ao atualizar usuário.';
+        this.carregando = false;
+      },
+    });
+  }
+
+  private limparMensagens(): void {
+    this.mensagemSucesso = '';
+    this.mensagemErro = '';
+  }
+
+  prepararEdicao(usuario: Usuario): void {
+    this.modoEdicao = true;
+    this.idUsuarioEmEdicao = usuario.id ?? null;
+    this.mensagemSucesso = '';
+    this.mensagemErro = '';
+
+    this.form.patchValue({
+      nome: usuario.nome,
+      email: usuario.email,
+      cep: usuario.cep ?? '',
+    });
+    this.form.markAllAsTouched();
+  }
+
   abrirConfirmacaoExclusao(usuario: Usuario): void {
     if (usuario.id == null) {
       return;
@@ -82,6 +134,14 @@ export class UsuarioFormComponent implements OnInit {
 
   fecharConfirmacaoExclusao(): void {
     this.usuarioParaExcluir = null;
+  }
+
+  cancelarEdicao(): void {
+    this.modoEdicao = false;
+    this.idUsuarioEmEdicao = null;
+    this.form.reset();
+    this.mensagemSucesso = '';
+    this.mensagemErro = '';
   }
 
   confirmarExclusao(): void {
